@@ -9,7 +9,7 @@
 import { WebGLRenderer, PerspectiveCamera, Vector3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SeedScene, GlobeScene } from 'scenes';
-import { FBXLoader } from 'three-fbx-loader';
+// import { FBXLoader } from 'three-fbx-loader';
 
 // Initialize core ThreeJS components
 const scene = new GlobeScene();
