@@ -18,9 +18,11 @@ import MODEL from './components/objects/Character/soldier.glb'
 const scene = new GlobeScene();
 const camera = new PerspectiveCamera();
 const renderer = new WebGLRenderer({ antialias: true });
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = true;
 
 // Set up camera
-camera.position.set(-30, 0, 0);
+camera.position.set(-30, 30, 0);
 camera.lookAt(new Vector3(0, 0, 0));
 
 // Set up renderer, canvas, and minor CSS adjustments
@@ -44,9 +46,13 @@ var characterControls;
 new GLTFLoader().load(MODEL, (gltf) => {
     gltf.scene.scale.set(1, 1, 1);
     const model = gltf.scene
-    model.traverse(function (object) {
-        if (object.isMesh) object.castShadow = true;
-    });
+    model.traverse(function (node) {
+        console.log(node.type);
+        if (node.isMesh) {
+            node.castShadow = true;
+            node.receiveShadow = true;
+        }
+    })
     model.scale.set(1, 1, 1);
     model.position.set(0, 10, 0);
     scene.add(model);

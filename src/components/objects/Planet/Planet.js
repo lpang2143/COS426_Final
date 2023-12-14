@@ -9,6 +9,8 @@ class Planet extends Group {
         const geometry = new SphereGeometry( 10, 35, 20 ); 
         const material = new MeshStandardMaterial( { color: 0x249c30 } ); 
         const sphere = new Mesh( geometry, material ); 
+        // sphere.castShadow = true;
+        sphere.receiveShadow = true;
         sphere.position.set( 0, 0, 0 );
 
         this.add(sphere);

@@ -16,21 +16,21 @@ class GlobeScene extends Scene {
             let x = MathUtils.randFloatSpread( 1000 );
             let y = MathUtils.randFloatSpread( 1000 );
             let z = MathUtils.randFloatSpread( 1000 );
-            // if (Math.abs(x) < 30 && x > 0) {
-            //     x += 30;
-            // } else {
-            //     x -= 30;
-            // }
-            // if (Math.abs(y) < 30 && y > 0) {
-            //     y += 30;
-            // } else {
-            //     y -= 30;
-            // }
-            // if (Math.abs(z) < 30 && z > 0) {
-            //     z += 30;
-            // } else {
-            //     z -= 30;
-            // }
+            if (Math.abs(x) < 30 && x > 0) {
+                x += 30;
+            } else {
+                x -= 30;
+            }
+            if (Math.abs(y) < 30 && y > 0) {
+                y += 30;
+            } else {
+                y -= 30;
+            }
+            if (Math.abs(z) < 30 && z > 0) {
+                z += 30;
+            } else {
+                z -= 30;
+            }
             stars.push(x, y, z);
         }
         var starsGeometry = new BufferGeometry();
