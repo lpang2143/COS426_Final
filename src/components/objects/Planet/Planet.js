@@ -1,4 +1,4 @@
-import { Group } from 'three';
+import { Group, SphereGeometry, MeshPhongMaterial, Mesh } from 'three';
 
 class Planet extends Group {
     constructor() {
@@ -6,12 +6,12 @@ class Planet extends Group {
         super();
 
         this.name = 'planet';
-        const geometry = new THREE.SphereGeometry( 15, 32, 16 ); 
-        const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } ); 
-        const sphere = new THREE.Mesh( geometry, material ); scene.add( sphere );
-        cubeA.position.set( 0, 0, 0 );
+        const geometry = new SphereGeometry( 10, 35, 20 ); 
+        const material = new MeshPhongMaterial( { color: 0xffff00 } ); 
+        const sphere = new Mesh( geometry, material ); 
+        sphere.position.set( 0, 0, 0 );
 
-        this.add(cubeA);
+        this.add(sphere);
 
     }
 }

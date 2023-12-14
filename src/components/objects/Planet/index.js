@@ -1,1 +1,1 @@
-export { default as Sphere } from './Planet.js';
+export { default as Planet } from './Planet.js';
