@@ -58,7 +58,7 @@ new GLTFLoader().load(MODEL, (gltf) => {
         animationsMap.set(a.name, mixer.clipAction(a));
     })
 
-    characterControls = new CharacterControls(model, mixer, animationsMap, 'Idle');
+    characterControls = new CharacterControls(model, mixer, animationsMap, 'Idle', camera);
 });
 
 // keyboard controls

@@ -11,11 +11,12 @@ export class CharacterControls {
     fadeDuration = 0.1
 
     constructor(model, mixer, 
-        animationsMap, currentAction) {
+        animationsMap, currentAction, camera) {
         this.model = model;
         this.mixer = mixer;
         this.animationsMap = animationsMap;
         this.currentAction = currentAction;
+        this.camera = camera
         console.log('action', currentAction);
         console.log('model', model);
         if (animationsMap) {
@@ -55,6 +56,13 @@ export class CharacterControls {
         }
 
         this.mixer.update(delta)
+
+        if (this.currentAction == 'Run' || this.currentAction == 'Walk') {
+            angleYCameraDirection = Math.atan2(
+                (this.camera.position.x - this.model.position.x),
+                (this.camera.position.z - this.model.position.z))
+            // var directionOffset = this.directionOffset(keysPressed);
+        }
 
         if (this.mixer) {
             this.mixer.update(delta);
