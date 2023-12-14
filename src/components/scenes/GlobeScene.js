@@ -1,4 +1,4 @@
-import { Scene, Color, MathUtils, BufferGeometry, Float32BufferAttribute, PointsMaterial, Points} from 'three';
+import { Scene, Color, MathUtils, BufferGeometry, Float32BufferAttribute, PointsMaterial, Points, Vector3} from 'three';
 import { Planet } from 'objects';
 import { BasicLights } from 'lights';
 
@@ -9,29 +9,19 @@ class GlobeScene extends Scene {
     constructor() {
         super()
 
-        this.background = new Color(0x000000);
-
+        this.background = new Color(0x222266);
+        var origin = new Vector3(0, 0, 0);
         var stars = new Array(0);
         for ( var i = 0; i < 20000; i ++ ) {
             let x = MathUtils.randFloatSpread( 1000 );
             let y = MathUtils.randFloatSpread( 1000 );
             let z = MathUtils.randFloatSpread( 1000 );
-            if (Math.abs(x) < 30 && x > 0) {
-                x += 30;
-            } else {
-                x -= 30;
+            let pos = new Vector3(x, y, z);
+            // console.log(pos);
+            // console.log(pos.distanceTo(origin));
+            if (pos.distanceTo(origin) > 40) {
+                stars.push(pos.x, pos.y, pos.z);
             }
-            if (Math.abs(y) < 30 && y > 0) {
-                y += 30;
-            } else {
-                y -= 30;
-            }
-            if (Math.abs(z) < 30 && z > 0) {
-                z += 30;
-            } else {
-                z -= 30;
-            }
-            stars.push(x, y, z);
         }
         var starsGeometry = new BufferGeometry();
         starsGeometry.setAttribute(
