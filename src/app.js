@@ -6,9 +6,12 @@
  * handles window resizes.
  *
  */
-import { WebGLRenderer, PerspectiveCamera, Vector3 } from 'three';
+import { WebGLRenderer, PerspectiveCamera, Vector3, AnimationMixer, Clock } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SeedScene, GlobeScene } from 'scenes';
+import { CharacterControls } from './components/objects/Character';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import MODEL from './components/objects/Character/soldier.glb'
 // import { FBXLoader } from 'three-fbx-loader';
 
 // Initialize core ThreeJS components
@@ -36,9 +39,48 @@ controls.minDistance = 3;
 controls.maxDistance = 30;
 controls.update();
 
+// create character model
+var characterControls;
+new GLTFLoader().load(MODEL, (gltf) => {
+    gltf.scene.scale.set(1, 1, 1);
+    const model = gltf.scene
+    model.traverse(function (object) {
+        if (object.isMesh) object.castShadow = true;
+    });
+    model.scale.set(1, 1, 1);
+    model.position.set(0, 10, 0);
+    scene.add(model);
+
+    const anim = gltf.animations;
+    const mixer = new AnimationMixer(model);
+    const animationsMap = new Map();
+    anim.filter(a => a.name != 'TPose').forEach((a) => {
+        animationsMap.set(a.name, mixer.clipAction(a));
+    })
+
+    characterControls = new CharacterControls(model, mixer, animationsMap, 'Idle');
+});
+
+// keyboard controls
+const keysPressed = {    }
+document.addEventListener('keydown', (event) => {
+    if (event.shiftKey && characterControls) {
+        characterControls.switchRunToggle()
+    } else {
+        (keysPressed)[event.key.toLowerCase()] = true
+    }
+}, false);
+document.addEventListener('keyup', (event) => {
+    (keysPressed)[event.key.toLowerCase()] = false;
+}, false);
+
 // Render loop
+const clock = new Clock();
 const onAnimationFrameHandler = (timeStamp) => {
-    controls.update();
+    if (characterControls) {
+        characterControls.update(clock.getDelta(), keysPressed);
+    }
+    controls.update(timeStamp);
     renderer.render(scene, camera);
     scene.update && scene.update(timeStamp);
     window.requestAnimationFrame(onAnimationFrameHandler);

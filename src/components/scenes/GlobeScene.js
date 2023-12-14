@@ -1,8 +1,11 @@
 import { Scene, Color, MathUtils, BufferGeometry, Float32BufferAttribute, PointsMaterial, Points} from 'three';
-import { Planet, Character } from 'objects';
+import { Planet } from 'objects';
 import { BasicLights } from 'lights';
 
 class GlobeScene extends Scene {
+
+    timestamp;
+
     constructor() {
         super()
 
@@ -40,11 +43,22 @@ class GlobeScene extends Scene {
 
         const planet = new Planet();
         const lights = new BasicLights();
-        const zombie = new Character();
-        zombie.position.set( 0, 10, 0 );
+        // const soldier = new Character();
+        // soldier.position.set( 0, 10, 0 );
         // zombie.scale(0.1, 0.1, 0.1);
-        this.add(planet, lights, zombie);
+        this.add(planet, lights);
     }
+
+    // update(newstamp) {
+    //     if (this.timestamp && newstamp) {
+    //     this.controls.update(this.timestamp-newstamp, keysPressed);
+    //     }
+    //     this.timestamp = newstamp
+    // }
+
+    // get soldier() {
+    //     return this.soldier;
+    // }
 }
 
 export default GlobeScene;
