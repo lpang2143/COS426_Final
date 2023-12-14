@@ -6,6 +6,10 @@ export class CharacterControls {
     // state vars
     toggleRun = false;
     currentAction;
+
+    // constant
+    fadeDuration = 0.1
+
     constructor(model, mixer, 
         animationsMap, currentAction) {
         this.model = model;
