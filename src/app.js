@@ -47,7 +47,7 @@ new GLTFLoader().load(MODEL, (gltf) => {
     gltf.scene.scale.set(1, 1, 1);
     const model = gltf.scene
     model.traverse(function (node) {
-        console.log(node.type);
+        // console.log(node.type);
         if (node.isMesh) {
             node.castShadow = true;
             node.receiveShadow = true;
@@ -55,6 +55,7 @@ new GLTFLoader().load(MODEL, (gltf) => {
     })
     model.scale.set(1, 1, 1);
     model.position.set(0, 10, 0);
+    model.lookAt(100, 0, 0);
     scene.add(model);
 
     const anim = gltf.animations;

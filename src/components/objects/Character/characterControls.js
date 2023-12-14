@@ -15,6 +15,7 @@ export class CharacterControls {
     walkDirection = new Vector3();
     rotateAngle = new Vector3(0, 1, 0);
     rotateQuarternion = new Quaternion();
+    movequat = new Quaternion();
 
     constructor(model, mixer, 
         animationsMap, currentAction, camera) {
@@ -73,6 +74,8 @@ export class CharacterControls {
             // console.log('angle', angleYCameraDirection);
             // console.log('offset', directionOffset);
             this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.1);
+
+            
         }
     }
 

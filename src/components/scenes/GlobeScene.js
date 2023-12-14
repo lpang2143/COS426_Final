@@ -9,7 +9,7 @@ class GlobeScene extends Scene {
     constructor() {
         super()
 
-        this.background = new Color(0x222266);
+        this.background = new Color(0x111122);
         var origin = new Vector3(0, 0, 0);
         var stars = new Array(0);
         for ( var i = 0; i < 20000; i ++ ) {
