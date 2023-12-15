@@ -15,12 +15,13 @@ class Planet extends Group {
         // sphere.castShadow = true;
         sphere.receiveShadow = true;
         sphere.position.set( 0, 0, 0 );
-        sphere2.position.set( -10, 0, 0);
+        sphere2.position.set( 3, 9, -2);
         sphere.attach(sphere2);
 
         this.add(sphere);
 
     }
+    
 }
 
 export default Planet;

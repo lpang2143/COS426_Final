@@ -34,6 +34,7 @@ class CharControl {
         // this.acceleration = new Vector3(0, 0, 0);
         this.velocity = new Vector3(0, 0, 0);
         this.position = new Vector3(0, 10, 0);
+        this.up = new Vector3(0, 1, 0);
 
         this.animations = {};
         this.input = new CharControlInput();
@@ -145,10 +146,21 @@ class CharControl {
         sideways.multiplyScalar(velocity.x * time);
         forward.multiplyScalar(velocity.z * time);
 
-        controlObject.position.add(forward);
-        controlObject.position.add(sideways);
+        // controlObject.position.add(forward);
+        // controlObject.position.add(sideways);
+        // console.log(velocity);
+        let v = new Vector3();
+        this.target.getWorldDirection(v);
+        v.negate();
+        // console.log(velocity);
+        if (velocity.length() > 0) {
+            let rot = v.cross(this.up);
+            // turn planet by theta/r
+            this.params.scene.Planet.rotateOnAxis(rot, -time * velocity.z / 10);
+            this.params.scene.Planet.rotateOnAxis(v, -time * velocity.x / 10);
+        }
 
-        this.position.copy(controlObject.position);
+        // this.position.copy(controlObject.position);
 
         if (this.mixer) {
         this.mixer.update(time);
@@ -410,7 +422,7 @@ class ThirdCamera {
         this.currentLook = new Vector3();
     }
 
-    CalcIdealOff(rotation) {
+    CalcIdealOff() {
         // console.log(rotation);
         const idealOff = new Vector3(2, 1.5, 4);
         // console.log(this.params.target.Rotation);
@@ -423,7 +435,7 @@ class ThirdCamera {
         return idealOff;
     }
 
-    CalcIdealLook(rotation) {
+    CalcIdealLook() {
         const idealLook = new Vector3(0, -3, -20);
         // console.log(this.position);
         // console.log(rotation);
@@ -434,9 +446,9 @@ class ThirdCamera {
         return idealLook;
     }
 
-    update(delta, rotation) {
-        const idealOff = this.CalcIdealOff(rotation);
-        const idealLook = this.CalcIdealLook(rotation);
+    update(delta) {
+        const idealOff = this.CalcIdealOff();
+        const idealLook = this.CalcIdealLook();
         // console.log("off", idealOff);
         // console.log("look", idealLook);
         const delay = 1 - Math.pow(0.001, delta);
@@ -446,7 +458,7 @@ class ThirdCamera {
         this.currentLook.lerp(idealLook, delay);
 
         this.camera.position.copy(this.currentPos);
-        console.log(this.currentPos);
+        // console.log(this.params.target.position);
         this.camera.lookAt(this.currentLook);
     }
 }
