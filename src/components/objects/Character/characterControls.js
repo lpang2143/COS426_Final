@@ -24,6 +24,11 @@ export class CharacterControls {
         this.animationsMap = animationsMap;
         this.currentAction = currentAction;
         this.camera = camera
+        // var out = new Vector3();
+        // if (this.model) {
+        //     this.model.getWorldDirection(out)
+        //     console.log(out);
+        // }
         // console.log('action', currentAction);
         // console.log('model', model);
         if (animationsMap) {
@@ -64,19 +69,19 @@ export class CharacterControls {
 
         this.mixer.update(delta)
 
-        if (this.currentAction == 'Run' || this.currentAction == 'Walk') {
-            let angleYCameraDirection = Math.atan2(
-                (this.camera.position.x - this.model.position.x),
-                (this.camera.position.z - this.model.position.z))
-            let directionOffset = this.directionOffset(keysPressed);
+        // if (this.currentAction == 'Run' || this.currentAction == 'Walk') {
+        //     let angleYCameraDirection = Math.atan2(
+        //         (this.camera.position.x - this.model.position.x),
+        //         (this.camera.position.z - this.model.position.z))
+        //     let directionOffset = this.directionOffset(keysPressed);
 
-            this.rotateQuarternion.setFromAxisAngle(this.rotateAngle, angleYCameraDirection + directionOffset);
-            // console.log('angle', angleYCameraDirection);
-            // console.log('offset', directionOffset);
-            this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.1);
-
+        //     this.rotateQuarternion.setFromAxisAngle(this.rotateAngle, angleYCameraDirection + directionOffset);
+        //     // console.log('angle', angleYCameraDirection);
+        //     // console.log('offset', directionOffset);
+        //     this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.1);
             
-        }
+        // }
+        return this.model.quaternion;
     }
 
     directionOffset(keysPressed) {

@@ -8,7 +8,7 @@ class Planet extends Group {
         this.name = 'planet';
         const geometry = new SphereGeometry( 10, 35, 20 );
         const geometry2 = new SphereGeometry( 2, 6, 6); 
-        console.log(geometry.attributes.normal);
+        // console.log(geometry.attributes.normal);s
         const material = new MeshStandardMaterial( { color: 0x249c30 } ); 
         const sphere = new Mesh( geometry, material ); 
         const sphere2 = new Mesh( geometry2, material );
