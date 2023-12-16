@@ -1,5 +1,5 @@
 import { Scene, Color, MathUtils, BufferGeometry, Float32BufferAttribute, PointsMaterial, Points, Vector3 } from 'three';
-import { Planet } from 'objects';
+import { Planet, Clouds } from 'objects';
 import { BasicLights } from 'lights';
 
 class GlobeScene extends Scene {
@@ -8,6 +8,11 @@ class GlobeScene extends Scene {
     
     constructor() {
         super()
+
+        // Init state
+        this.state = {
+            updateList: [],
+        };
 
         this.background = new Color(0x111122);
         this.up = new Vector3(0, 1, 0);
@@ -35,6 +40,10 @@ class GlobeScene extends Scene {
 
         this.planet = new Planet();
         this.lights = new BasicLights();
+
+        const clouds = new Clouds();
+        clouds.position.set(15,0,0);
+        this.attach(clouds);
         // const soldier = new Character();
         // soldier.position.set( 0, 10, 0 );
         // zombie.scale(0.1, 0.1, 0.1);
@@ -45,26 +54,37 @@ class GlobeScene extends Scene {
         return this.planet;
     }
 
-    // update(velocity, dir) {
-    //     // console.log(velocity);
-    //     // console.log(dir);
-    //     if (!(velocity && dir)) return;
-    //     console.log(dir);
-    //     // this.rot = dir.copy().cross(this.up);
+    update(timeStamp) {
+        const {  updateList } = this.state;
+        // console.log(backgroundTime * timeStamp);
+        // SETS BACKGROUND COLOR TO CHANGE WITH TIME
 
-        
-    // }
+        var day = new Color(0x91BFCF);
+        var duskdawn = new Color(0xFF571F);
+        var night = new Color(0x0f001e);
 
-    // update(newstamp) {
-    //     if (this.timestamp && newstamp) {
-    //     this.controls.update(this.timestamp-newstamp, keysPressed);
-    //     }
-    //     this.timestamp = newstamp
-    // }
+        var color = night.lerp(day, Math.abs(Math.sin(timeStamp / 100000)));
+        const obj = this.getObjectByName( "clouds" );
+        // console.log(Math.abs(Math.sin(timeStamp / 500)));
+        // console.log(0.5*Math.sin(timeStamp / 20000) + 1);
 
-    // get soldier() {
-    //     return this.soldier;
-    // }
+        if ((Math.abs(Math.sin(timeStamp / 100000))) < 0.5) {
+            obj.visible = false;
+        } else {
+            obj.visible = true;
+        }
+        // console.log(obj);
+
+        this.background = color;
+        // this.background = new Color(0x000000);
+
+        // Call update for each object in the updateList
+        for (const obj of updateList) {
+            obj.update(timeStamp);
+        }
+    }
+
+    
 }
 
 export default GlobeScene;
