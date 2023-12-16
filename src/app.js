@@ -471,8 +471,8 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = true;
 
 // Set up camera
-// camera.position.set(2, 12, 4);
-// camera.lookAt(new Vector3(0, 0, -20));
+// camera.position.set(0, 20, -30);
+// camera.lookAt(new Vector3(0, 0, 0));
 
 // Set up renderer, canvas, and minor CSS adjustments
 renderer.setPixelRatio(window.devicePixelRatio);
