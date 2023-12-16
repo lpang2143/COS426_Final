@@ -1,9 +1,9 @@
 {
-  "name": "lower-case-dashed-name-of-project",
+  "name": "worldscape",
   "repository": "cos426finalproject",
   "version": "0.1.0",
-  "title": "Walking Game",
-  "description": "SHORT DESCRIPTION OF PROJECT HERE. ONE TO TWO SENTENCES MAX",
+  "title": "Worldscape",
+  "description": "Open-world spherical world game.",
   "keywords": [
     "Princeton",
     "graphics",
