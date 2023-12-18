@@ -7,12 +7,13 @@
  *
  */
 import { WebGLRenderer, PerspectiveCamera, Vector3, AnimationMixer, Clock, Quaternion, LoadingManager } from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { GlobeScene } from 'scenes';
+// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { GlobeScene, TestScene } from 'scenes';
 // import { CharacterControls } from './components/objects/Character';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+// import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 // import { ThirdCamera } from './components/cameras';
-import MODEL from './components/objects/Character/soldier.glb';
+import MODEL from './components/objects/Character/amy.glb';
 // import { FBXLoader } from 'three-fbx-loader';
 
 class CharControlProxy {
@@ -46,8 +47,11 @@ class CharControl {
 
     loadModels() {
         const loader = new GLTFLoader();
+        // const dracoloader = new DRACOLoader();
+        // dracoloader.setDecoderPath( '/examples/jsm/libs/draco/' );
+        // loader.setDRACOLoader( dracoloader );
         loader.load(MODEL, (gltf) => {
-            gltf.scene.scale.set(1, 1, 1);
+            gltf.scene.scale.set(-1, 1, -1);
             gltf.scene.position.set(0, 10, 0);
             gltf.scene.traverse(c => {
               c.castShadow = true;
@@ -62,7 +66,7 @@ class CharControl {
             this.anim.filter(a => a.name != 'TPose').forEach((a) => {
                 this.animations[a.name] = this.mixer.clipAction(a);
             });
-            console.log(this.animations);
+            // console.log(this.animations);
             this.fsm.SetState('Idle');
         });
     }
@@ -151,13 +155,16 @@ class CharControl {
         // console.log(velocity);
         let v = new Vector3();
         this.target.getWorldDirection(v);
-        v.negate();
-        // console.log(velocity);
+        // v.normalize();
+        // v.negate();
+        // console.log(v);
+        // console.log(this.up);
         if (velocity.length() > 0) {
             let rot = v.cross(this.up);
+            rot.normalize();
             // turn planet by theta/r
-            this.params.scene.Planet.rotateOnAxis(rot, -time * velocity.z / 10);
-            this.params.scene.Planet.rotateOnAxis(v, -time * velocity.x / 10);
+            this.params.scene.Planet.rotateOnWorldAxis(rot, -time * velocity.z / 10);
+            // this.params.scene.Planet.rotateOnAxis(v, -time * velocity.x / 10);
         }
 
         // this.position.copy(controlObject.position);
@@ -272,7 +279,10 @@ class CharFSM extends FSM {
     _Init() {
       this.AddState('Idle', IdleState);
       this.AddState('Walk', WalkState);
+      this.AddState('WalkBack', WalkBackState);
       this.AddState('Run', RunState);
+      this.AddState('WalkL', WalkLState );
+      this.AddState('WalkR', WalkRState );
     //   this.AddState('dance', DanceState);
     }
   };
@@ -321,17 +331,25 @@ class WalkState extends State {
     }
   
     Update(timeElapsed, input) {
-        if (input.keys.forward || input.keys.backward) {
+        if (input.keys.forward) {
             if (input.keys.shift) {
                 this._parent.SetState('Run');
             }
             return;
+        } else if (input.keys.backward) {
+            this._parent.SetState('WalkBack');
+            return;
+        // } else if (input.keys.right) {
+        //     this._parent.SetState('WalkR');
+        //     return;
+        // } else if (input.keys.left) {
+        //     this._parent.SetState('WalkL');
+        //     return;
         }
   
         this._parent.SetState('Idle');
     }
 };
-
 
 class RunState extends State {
 constructor(parent) {
@@ -367,11 +385,20 @@ Enter(prevState) {
     }
 
     Update(timeElapsed, input) {
-        if (input.keys.forward || input.keys.backward) {
+        if (input.keys.forward) {
             if (!input.keys.shift) {
                 this._parent.SetState('Walk');
             }
         return;
+        } else if (input.keys.backward) {
+            this._parent.SetState('WalkBack');
+            return;
+        } else if (input.keys.left) {
+            this._parent.SetState('WalkL')
+            return;
+        } else if (input.keys.right) {
+            this._parent.SetState('WalkR')
+            return;
         }
 
         this._parent.SetState('Idle');
@@ -388,7 +415,8 @@ class IdleState extends State {
     }
   
     Enter(prevState) {
-        console.log(this._parent.proxy.anims);
+        // console.log(this._parent.proxy.anims);
+        console.log('Idle');
         const idleAction = this._parent.proxy.anims['Idle'];
         if (prevState) {
             const prevAction = this._parent.proxy.anims[prevState.Name];
@@ -405,11 +433,172 @@ class IdleState extends State {
     }
   
     Update(_, input) {
-        if (input.keys.forward || input.keys.backward) {
-            this._parent.SetState('Walk');
-        } else if (input.keys.space) {
-            this._parent.SetState('dance');
+        if (input.keys.forward) {
+            if (input.keys.shift) {
+                this._parent.SetState('Run');
+                return;
+            } else {
+                this._parent.SetState('Walk');
+                return;
+            }
+        } else if (input.keys.backward) {
+            this._parent.SetState('WalkBack');
+            return;
+        } else if (input.keys.right) {
+            this._parent.SetState('WalkR');
+            return;
+        } else if (input.keys.left) {
+            this._parent.SetState('WalkL');
+            return;
         }
+    }
+};
+
+class WalkBackState extends State {
+    constructor(parent) {
+        super(parent);
+    }
+  
+    get Name() {
+        return 'WalkBack';
+    }
+  
+    Enter(prevState) {
+        console.log(this._parent.proxy.anims);
+        const walkBackAction = this._parent.proxy.anims['WalkBack'];
+        // console.log(walkBackAction);
+        if (prevState) {
+            const prevAction = this._parent.proxy.anims[prevState.Name];
+            walkBackAction.time = 0.0;
+            walkBackAction.enabled = true;
+            walkBackAction.setEffectiveTimeScale(1.0);
+            walkBackAction.setEffectiveWeight(1.0);
+            walkBackAction.crossFadeFrom(prevAction, 0.5, true);
+            walkBackAction.play();
+        } else {
+            walkBackAction.play();
+        }
+    } Exit() {
+    }
+  
+    Update(_, input) {
+        if (input.keys.backward) {
+            return;
+        }
+        if (input.keys.forward) {
+            if (input.keys.shift) {
+                this._parent.SetState('Run');
+                return;
+            } else {
+                this._parent.SetState('Walk');
+                return;
+            }
+        } else if (input.keys.right) {
+            this._parent.SetState('WalkR');
+            return;
+        } else if (input.keys.left) {
+            this._parent.SetState('WalkL');
+            return;
+        }
+        this._parent.SetState('Idle');
+    }
+};
+
+class WalkLState extends State {
+    constructor(parent) {
+        super(parent);
+    }
+  
+    get Name() {
+        return 'WalkL';
+    }
+  
+    Enter(prevState) {
+        console.log(this._parent.proxy.anims);
+        const walkLAction = this._parent.proxy.anims['WalkL'];
+        console.log('WalkL');
+        if (prevState) {
+            const prevAction = this._parent.proxy.anims[prevState.Name];
+            walkLAction.time = 0.0;
+            walkLAction.enabled = true;
+            walkLAction.setEffectiveTimeScale(1.0);
+            walkLAction.setEffectiveWeight(1.0);
+            walkLAction.crossFadeFrom(prevAction, 0.5, true);
+            walkLAction.play();
+        } else {
+            walkLAction.play();
+        }
+    } Exit() {
+    }
+  
+    Update(_, input) {
+        if (input.keys.left) {
+        return;
+        } else if (input.keys.backward) {
+            this._parent.SetState('WalkBack');
+            return;
+        } else if (input.keys.forward) {
+            if (input.keys.shift) {
+                this._parent.SetState('Run');
+                return;
+            } else {
+                this._parent.SetState('Walk');
+                return;
+            }
+        } else if (input.keys.right) {
+            this._parent.SetState('WalkR');
+            return;
+        }
+        this._parent.SetState('Idle');
+    }
+};
+
+class WalkRState extends State {
+    constructor(parent) {
+        super(parent);
+    }
+  
+    get Name() {
+        return 'WalkR';
+    }
+  
+    Enter(prevState) {
+        console.log(this._parent.proxy.anims);
+        const walkRAction = this._parent.proxy.anims['WalkR'];
+        // console.log(walkBackAction);
+        if (prevState) {
+            const prevAction = this._parent.proxy.anims[prevState.Name];
+            walkRAction.time = 0.0;
+            walkRAction.enabled = true;
+            walkRAction.setEffectiveTimeScale(1.0);
+            walkRAction.setEffectiveWeight(1.0);
+            walkRAction.crossFadeFrom(prevAction, 0.5, true);
+            walkRAction.play();
+        } else {
+            walkRAction.play();
+        }
+    } Exit() {
+    }
+  
+    Update(_, input) {
+        if (input.keys.right) {
+        return;
+        } else if (input.keys.backward) {
+            this._parent.SetState('WalkBack');
+            return;
+        } else if (input.keys.forward) {
+            if (input.keys.shift) {
+                this._parent.SetState('Run');
+                return;
+            } else {
+                this._parent.SetState('Walk');
+                return;
+            }
+        } else if (input.keys.left) {
+            this._parent.SetState('WalkL');
+            return;
+        }
+        this._parent.SetState('Idle');
     }
 };
 
@@ -428,8 +617,8 @@ class ThirdCamera {
         // console.log(this.params.target.Rotation);
         const quat = this.params.target.Rotation;
         // console.log(quat);
-        quat.w = -quat.w;
-        idealOff.applyQuaternion(this.params.target.Rotation.invert());
+        // quat.w = -quat.w;
+        idealOff.applyQuaternion(this.params.target.Rotation);
         // console.log(idealOff);
         idealOff.add(this.params.target.Position);
         return idealOff;
@@ -440,8 +629,8 @@ class ThirdCamera {
         // console.log(this.position);
         // console.log(rotation);
         const quat = this.params.target.Rotation;
-        quat.w = -quat.w;
-        idealLook.applyQuaternion(this.params.target.Rotation.invert());
+        // quat.w = -quat.w;
+        idealLook.applyQuaternion(this.params.target.Rotation);
         idealLook.add(this.params.target.Position);
         return idealLook;
     }
