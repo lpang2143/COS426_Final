@@ -1,12 +1,12 @@
 {
   "name": "worldscape",
-  "repository": "cos426finalproject",
+  "repository": "cos426finalproject", 
   "version": "0.1.0",
   "title": "Worldscape",
   "description": "Open-world spherical world game.",
   "keywords": [
     "Princeton",
-    "graphics",
+    "graphics", 
     "three.js",
     "COS 426",
     "keywor0d",

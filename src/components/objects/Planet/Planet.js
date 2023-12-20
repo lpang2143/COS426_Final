@@ -96,7 +96,7 @@ class Planet extends Group {
         const tree = new Tree();
         const tree1 = new Tree();
         const tree2 = new Tree();
-        tree.position.set(0, 10, 0);
+        tree.position.set(3, 9, 0);
         sphere.attach(tree);
 
         tree1.position.set(-RADIUS, 0, 0);
